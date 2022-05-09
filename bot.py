@@ -22,10 +22,10 @@ translator = googletrans.Translator()
 
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
-    if db.subscriber_exists(message.from_user.id) and len(db.get_subscriber_language(message.from_user.id)):
-        language = (db.get_subscriber_language(message.from_user.id))[0][0]
-    else:
+    if not db.subscriber_exists(message.from_user.id):
         language = 'ru'
+    else:
+        language = (db.get_subscriber_language(message.from_user.id))[0][0]
     db.add_subscriber(message.from_user.id, message.from_user.first_name, False)
     m = translator.translate("Привет", src='ru', dest=language).text + ", " + message.from_user.first_name + "!\n"
     m += translator.translate("Я бот, который будет напоминать тебе о занятиях", src='ru', dest=language).text + "\n"
@@ -53,10 +53,10 @@ async def subscribe(message: types.Message):
 
 @dp.message_handler(commands=['group'])
 async def group_is(message: types.Message):
-    if db.subscriber_exists(message.from_user.id) and len(db.get_subscriber_language(message.from_user.id)):
-        language = (db.get_subscriber_language(message.from_user.id))[0][0]
-    else:
+    if not db.subscriber_exists(message.from_user.id):
         language = 'ru'
+    else:
+        language = (db.get_subscriber_language(message.from_user.id))[0][0]
     text = message.text.split()
     if len(text) == 2:
         group = text[1]
@@ -81,10 +81,10 @@ async def group_is(message: types.Message):
 
 @dp.message_handler(commands=['unsubscribe'])
 async def unsubscribe(message: types.Message):
-    if db.subscriber_exists(message.from_user.id) and len(db.get_subscriber_language(message.from_user.id)):
-        language = (db.get_subscriber_language(message.from_user.id))[0][0]
-    else:
+    if not db.subscriber_exists(message.from_user.id):
         language = 'ru'
+    else:
+        language = (db.get_subscriber_language(message.from_user.id))[0][0]
     if not db.subscriber_exists(message.from_user.id):
         db.add_subscriber(message.from_user.id, False)
         await message.answer(translator.translate("Вы ещё не подключили рассылку!", src='ru', dest=language).text)
@@ -96,10 +96,10 @@ async def unsubscribe(message: types.Message):
 
 @dp.message_handler(commands=['update'])
 async def update_timetables(message: types.Message):
-    if db.subscriber_exists(message.from_user.id) and len(db.get_subscriber_language(message.from_user.id)):
-        language = (db.get_subscriber_language(message.from_user.id))[0][0]
-    else:
+    if not db.subscriber_exists(message.from_user.id):
         language = 'ru'
+    else:
+        language = (db.get_subscriber_language(message.from_user.id))[0][0]
     language = (db.get_subscriber_language(message.from_user.id))[0][0]
     update_excels()
     await message.answer(translator.translate("Расписание обновлено", src='ru', dest=language).text)
@@ -107,10 +107,10 @@ async def update_timetables(message: types.Message):
 
 @dp.message_handler(commands=['info'])
 async def update_g(message: types.Message):
-    if db.subscriber_exists(message.from_user.id) and len(db.get_subscriber_language(message.from_user.id)):
-        language = (db.get_subscriber_language(message.from_user.id))[0][0]
-    else:
+    if not db.subscriber_exists(message.from_user.id):
         language = 'ru'
+    else:
+        language = (db.get_subscriber_language(message.from_user.id))[0][0]
     m = translator.translate("Привет, я - бот с расписанием", src='ru', dest=language).text
     m += ", " + translator.translate("меня написал студент первого курса ФПМИ", src='ru', dest=language).text + ", "
     name = translator.translate("Могилёв Георгий", src='ru', dest=language).text
@@ -121,10 +121,10 @@ async def update_g(message: types.Message):
 @dp.message_handler(commands=['language'])
 async def language_is(message: types.Message):
     text = message.text.split()
-    if db.subscriber_exists(message.from_user.id) and len(db.get_subscriber_language(message.from_user.id)):
-        l0 = (db.get_subscriber_language(message.from_user.id))[0][0]
-    else:
+    if not db.subscriber_exists(message.from_user.id):
         l0 = 'ru'
+    else:
+        l0 = (db.get_subscriber_language(message.from_user.id))[0][0]
     if len(text) == 2:
         language = text[1]
         language_tag = l[language]
