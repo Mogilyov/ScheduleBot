@@ -127,8 +127,8 @@ async def language_is(message: types.Message):
         l0 = (db.get_subscriber_language(message.from_user.id))[0][0]
     if len(text) == 2:
         language = text[1]
-        language_tag = l[language]
         if language in l.keys():
+            language_tag = l[language]
             if not db.subscriber_exists(message.from_user.id):
                 db.add_subscriber(message.from_user.id, False)
                 db.set_language(message.from_user.id, language_tag)
