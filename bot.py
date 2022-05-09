@@ -23,10 +23,10 @@ translator = googletrans.Translator()
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
     if not db.subscriber_exists(message.from_user.id):
+        db.add_subscriber(message.from_user.id, message.from_user.first_name, False)
         language = 'ru'
     else:
         language = (db.get_subscriber_language(message.from_user.id))[0][0]
-    db.add_subscriber(message.from_user.id, message.from_user.first_name, False)
     m = translator.translate("Привет", src='ru', dest=language).text + ", " + message.from_user.first_name + "!\n"
     m += translator.translate("Я бот, который будет напоминать тебе о занятиях", src='ru', dest=language).text + "\n"
     m += translator.translate("Вот основные команды", src='ru', dest=language).text + ":\n"
