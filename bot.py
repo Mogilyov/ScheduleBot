@@ -21,9 +21,11 @@ translator = googletrans.Translator()
 
 
 @dp.message_handler(commands=['start'])
-async def unsubscribe(message: types.Message):
-    language = (db.get_subscriber_language(message.from_user.id))[0][0]
-
+async def start(message: types.Message):
+    if db.subscriber_exists(message.from_user.id) and len(db.get_subscriber_language(message.from_user.id)):
+        language = (db.get_subscriber_language(message.from_user.id))[0][0]
+    else:
+        language = 'ru'
     m = translator.translate("Привет", src='ru', dest=language).text + ", " + message.from_user.first_name + "!\n"
     m += translator.translate("Я бот, который будет напоминать тебе о занятиях", src='ru', dest=language).text + "\n"
     m += translator.translate("Вот основные команды", src='ru', dest=language).text + ":\n"
@@ -41,7 +43,8 @@ async def subscribe(message: types.Message):
     language = (db.get_subscriber_language(message.from_user.id))[0][0]
     if not db.subscriber_exists(message.from_user.id):
         db.add_subscriber(message.from_user.id, message.from_user.first_name)
-        await message.answer(translator.translate("Рассылка подключена. Не забывайте ботать!", src='ru', dest=language).text)
+        await message.answer(translator.translate("Рассылка подключена. Не забывайте ботать!",
+                                                  src='ru', dest=language).text)
     else:
         db.update_subscription(message.from_user.id, True)
         await message.answer(translator.translate("Рассылка подключена", src='ru', dest=language).text)
@@ -49,10 +52,6 @@ async def subscribe(message: types.Message):
 
 @dp.message_handler(commands=['group'])
 async def group_is(message: types.Message):
-    a = db.get_subscriber_language(message.from_user.id)
-    print(a)
-    print(a[0])
-    print(a[0][0])
     language = (db.get_subscriber_language(message.from_user.id))[0][0]
     text = message.text.split()
     if len(text) == 2:
@@ -122,9 +121,11 @@ async def language_is(message: types.Message):
             else:
                 db.set_language(message.from_user.id, language_tag)
                 await message.answer(
-                    translator.translate("Я запомнил, Ваш язык", src='ru', dest=l[language]).text + " - " + language + "!")
+                    translator.translate("Я запомнил, Ваш язык",
+                                         src='ru', dest=l[language]).text + " - " + language + "!")
         else:
-            await message.answer(translator.translate("Произошла ошибка, я не знаю этого языка!", src='ru', dest=l0).text)
+            await message.answer(translator.translate("Произошла ошибка, я не знаю этого языка!",
+                                                      src='ru', dest=l0).text)
     else:
         await message.answer(translator.translate("Произошла ошибка, укажите язык!", src='ru', dest=l0).text)
 
@@ -143,7 +144,8 @@ async def send_para_info(para_number):
             a = para_info(s[3], start_times[1][para_number-1])
             # проверяем чтобы группа была указана верно
             if a[0] == "bad":
-                await bot.send_message(s[1], translator.translate("Я не нашёл Вашу группу!", src='ru', dest=l[language]).text)
+                await bot.send_message(s[1], translator.translate("Я не нашёл Вашу группу!",
+                                                                  src='ru', dest=l[language]).text)
             # проверяем, это две одинаковые пары подряд? если да, то затираем её
             if para_number > 1:
                 b = para_info(s[3], start_times[1][para_number-2])
@@ -151,8 +153,10 @@ async def send_para_info(para_number):
                     a[0] = ""
             # проверяем, есть пара, или окно?
             if len(a) >= 1 and a[0] != "":
-                m = s[4] + ", " + translator.translate("у тебя начнется пара в", src='ru', dest=l[language]).text
-                m += start_times[0][para_number - 1] + "\n\n" + translator.translate(a[0], src='ru', dest=l[language]).text
+                m = s[4] + ", " + translator.translate("у тебя начнется пара в",
+                                                       src='ru', dest=l[language]).text
+                m += start_times[0][para_number - 1] + "\n\n" + translator.translate(a[0],
+                                                                                     src='ru', dest=l[language]).text
                 # проверяем дополнительную информацию о паре
                 if len(a) > 1:
                     m += " (" + translator.translate(a[1], src='ru', dest=l[language]).text
