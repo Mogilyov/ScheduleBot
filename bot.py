@@ -26,6 +26,7 @@ async def start(message: types.Message):
         language = (db.get_subscriber_language(message.from_user.id))[0][0]
     else:
         language = 'ru'
+    db.add_subscriber(message.from_user.id, message.from_user.first_name, False)
     m = translator.translate("Привет", src='ru', dest=language).text + ", " + message.from_user.first_name + "!\n"
     m += translator.translate("Я бот, который будет напоминать тебе о занятиях", src='ru', dest=language).text + "\n"
     m += translator.translate("Вот основные команды", src='ru', dest=language).text + ":\n"
@@ -61,7 +62,7 @@ async def group_is(message: types.Message):
         group = text[1]
         if match(r"[БСМ]\d{2}-\d{3}", group) and len(group) == 7:
             if not db.subscriber_exists(message.from_user.id):
-                db.add_subscriber(message.from_user.id, False)
+                db.add_subscriber(message.from_user.id, message.from_user.first_name, False)
                 db.set_group(message.from_user.id, group)
                 await message.answer(translator.translate("Вы ещё не подключили рассылку, но я запомнил, что Ваша группа",
                                                           src='ru', dest=language).text + " - " + group + "!")
