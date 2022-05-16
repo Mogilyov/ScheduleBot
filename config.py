@@ -2,8 +2,8 @@ API_TOKEN = '5369370572:AAFSj27iscLzqXm1VNCSq1pSPuck-Ycv_Q0'
 
 days_of_week = {1: "Понедельник", 2: "Вторник", 3: "Среда", 4: "Четверг", 5: "Пятница", 6: "Суббота"}
 start_times = [["9:00", "10:45", "12:20", "13:55", "15:30", "17:05", "18:35"],
-               ["900 - 1025", "1045 - 1210", "1220 - 1345", "1355 - 1520", "1530 - 1655", "1705 - 1830", "1835 - 2000"]]
-
+               ["900 - 1025", "1045 - 1210", "1220 - 1345", "1355 - 1520", "1530 - 1655", "1705 - 1830", "1835 - 2000"],
+               ["08:45", "10:30", "12:05", "13:40", "15:15", "16:55", "18:25"]]
 l = {'afrikaans': 'af', 'albanian': 'sq', 'amharic': 'am', 'arabic': 'ar', 'armenian': 'hy', 'azerbaijani': 'az',
      'basque': 'eu', 'belarusian': 'be', 'bengali': 'bn', 'bosnian': 'bs', 'bulgarian': 'bg', 'catalan': 'ca',
      'cebuano': 'ceb', 'chichewa': 'ny', 'chinese': 'zh-cn', 'chinese traditional': 'zh-tw',

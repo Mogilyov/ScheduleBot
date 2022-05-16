@@ -10,7 +10,6 @@ from re import match
 from wwExcel import para_info
 from wwSQL import SQL
 
-
 basicConfig(level=INFO)
 
 bot = Bot(token=API_TOKEN)
@@ -38,7 +37,6 @@ async def start(message: types.Message):
     await message.answer(m)
 
 
-
 @dp.message_handler(commands=['subscribe'])
 async def subscribe(message: types.Message):
     language = (db.get_subscriber_language(message.from_user.id))[0][0]
@@ -64,8 +62,9 @@ async def group_is(message: types.Message):
             if not db.subscriber_exists(message.from_user.id):
                 db.add_subscriber(message.from_user.id, message.from_user.first_name, False)
                 db.set_group(message.from_user.id, group)
-                await message.answer(translator.translate("Вы ещё не подключили рассылку, но я запомнил, что Ваша группа",
-                                                          src='ru', dest=language).text + " - " + group + "!")
+                await message.answer(
+                    translator.translate("Вы ещё не подключили рассылку, но я запомнил, что Ваша группа",
+                                         src='ru', dest=language).text + " - " + group + "!")
             else:
                 db.set_group(message.from_user.id, group)
                 await message.answer(translator.translate("Я запомнил, Ваша группа - " + group + "!",
@@ -76,7 +75,6 @@ async def group_is(message: types.Message):
     else:
         await message.answer(translator.translate("Произошла ошибка, укажите номер группы!",
                                                   src='ru', dest=language).text)
-
 
 
 @dp.message_handler(commands=['unsubscribe'])
@@ -91,7 +89,6 @@ async def unsubscribe(message: types.Message):
     else:
         db.update_subscription(message.from_user.id, False)
         await message.answer(translator.translate("Рассылка отключена", src='ru', dest=language).text)
-
 
 
 @dp.message_handler(commands=['update'])
@@ -151,29 +148,28 @@ async def as_excel_update():
     update_excels()
 
 
-
 async def send_para_info(para_number):
     subscriptions = db.get_subscriptions()
     for s in subscriptions:
         # проверяем чтобы группа была указана
         if s[3] is not None:
             language = s[5]
-            a = para_info(s[3], start_times[1][para_number-1])
+            a = para_info(s[3], start_times[1][para_number - 1])
             # проверяем чтобы группа была указана верно
             if a[0] == "bad":
                 await bot.send_message(s[1], translator.translate("Я не нашёл Вашу группу!",
                                                                   src='ru', dest=language).text)
             # проверяем, это две одинаковые пары подряд? если да, то затираем её
             if para_number > 1:
-                b = para_info(s[3], start_times[1][para_number-2])
+                b = para_info(s[3], start_times[1][para_number - 2])
                 if a[0] == b[0]:
                     a[0] = ""
             # проверяем, есть пара, или окно?
             if len(a) >= 1 and a[0] != "":
                 m = s[4] + ", " + translator.translate("у тебя начнется пара в",
                                                        src='ru', dest=language).text
-                m += start_times[0][para_number - 1] + "\n\n" + translator.translate(a[0],
-                                                                                     src='ru', dest=language).text
+                m += " " + start_times[0][para_number - 1] + "\n\n" + translator.translate(a[0],
+                                                                                           src='ru', dest=language).text
                 # проверяем дополнительную информацию о паре
                 if len(a) > 1:
                     m += " (" + translator.translate(a[1], src='ru', dest=language).text
@@ -184,49 +180,14 @@ async def send_para_info(para_number):
                 await bot.send_message(s[1], m)
 
 
-async def first_para():
-    await send_para_info(1)
-
-
-async def second_para():
-    await send_para_info(2)
-
-
-async def third_para():
-    await send_para_info(3)
-
-
-async def fourth_para():
-    await send_para_info(4)
-
-
-async def fifth_para():
-    await send_para_info(5)
-
-
-async def sixth_para():
-    await send_para_info(6)
-
-
-async def seventh_para():
-    await send_para_info(7)
-
-
 async def scheduler():
-    aioschedule.every().day.at("8:00").do(as_excel_update)
-
-    aioschedule.every().day.at("08:45").do(first_para)
-    aioschedule.every().day.at("10:30").do(second_para)
-    aioschedule.every().day.at("12:05").do(third_para)
-    aioschedule.every().day.at("13:40").do(fourth_para)
-    aioschedule.every().day.at("15:15").do(fifth_para)
-    aioschedule.every().day.at("16:55").do(sixth_para)
-    aioschedule.every().day.at("18:25").do(seventh_para)
-
-
     while True:
         await aioschedule.run_pending()
-        await asyncio.sleep(60)
+        await asyncio.sleep(59)
+        aioschedule.every().day.at("8:00").do(as_excel_update)
+
+        for i in range(0, 6):
+            aioschedule.every().day.at(start_times[2][i]).do(send_para_info, para_number=i + 1)
 
 
 async def on_startup(_):
