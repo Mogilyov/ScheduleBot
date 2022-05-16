@@ -162,7 +162,7 @@ async def send_para_info(para_number):
             # проверяем чтобы группа была указана верно
             if a[0] == "bad":
                 await bot.send_message(s[1], translator.translate("Я не нашёл Вашу группу!",
-                                                                  src='ru', dest=l[language]).text)
+                                                                  src='ru', dest=language).text)
             # проверяем, это две одинаковые пары подряд? если да, то затираем её
             if para_number > 1:
                 b = para_info(s[3], start_times[1][para_number-2])
@@ -171,15 +171,15 @@ async def send_para_info(para_number):
             # проверяем, есть пара, или окно?
             if len(a) >= 1 and a[0] != "":
                 m = s[4] + ", " + translator.translate("у тебя начнется пара в",
-                                                       src='ru', dest=l[language]).text
+                                                       src='ru', dest=language).text
                 m += start_times[0][para_number - 1] + "\n\n" + translator.translate(a[0],
-                                                                                     src='ru', dest=l[language]).text
+                                                                                     src='ru', dest=language).text
                 # проверяем дополнительную информацию о паре
                 if len(a) > 1:
-                    m += " (" + translator.translate(a[1], src='ru', dest=l[language]).text
+                    m += " (" + translator.translate(a[1], src='ru', dest=language).text
                     # проверяем дополнительную информацию о паре
                     if len(a) > 2:
-                        m += " " + translator.translate(a[2], src='ru', dest=l[language]).text
+                        m += " " + translator.translate(a[2], src='ru', dest=language).text
                     m += ")"
                 await bot.send_message(s[1], m)
 
